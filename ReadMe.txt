@@ -1,9 +1,5 @@
-http://coms-3090-029.class.las.iastate.edu:8080
-
 Examples of format for HTTP requests at the bottom of the file
 
-Online API here:
-http://coms-3090-029.class.las.iastate.edu:8080/swagger-ui/index.html#/
 
 Javadoc documentation for the backend is in the Documents/Javadoc Backend folder in the main branch. Link:
 https://git.las.iastate.edu/cs309/2025spring/3_rasel_7/-/tree/main/Documents/Javadoc%20Backend?ref_type=heads

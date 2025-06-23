@@ -1,0 +1,190 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > ImageController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.images</a>
+</div>
+
+<h1>Coverage Summary for Class: ImageController (org.images)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ImageController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (3/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    50%
+  </span>
+  <span class="absValue">
+    (1/2)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    55.6%
+  </span>
+  <span class="absValue">
+    (10/18)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.images;
+&nbsp;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.web.bind.annotation.CrossOrigin;
+&nbsp;import org.springframework.web.bind.annotation.DeleteMapping;
+&nbsp;import org.springframework.web.bind.annotation.GetMapping;
+&nbsp;import org.springframework.web.bind.annotation.PathVariable;
+&nbsp;import org.springframework.web.bind.annotation.PostMapping;
+&nbsp;import org.springframework.web.bind.annotation.RequestMapping;
+&nbsp;import org.springframework.web.bind.annotation.RequestParam;
+&nbsp;import org.springframework.web.bind.annotation.RestController;
+&nbsp;import org.springframework.web.multipart.MultipartFile;
+&nbsp;
+&nbsp;@RestController
+&nbsp;@RequestMapping(&quot;/images&quot;)
+&nbsp;@CrossOrigin(origins = &quot;*&quot;)
+<b class="fc">&nbsp;public class ImageController {</b>
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private ImageRepository imageRepository;
+&nbsp;
+&nbsp;    @PostMapping(&quot;/upload&quot;)
+&nbsp;    public ResponseEntity&lt;?&gt; uploadImage(@RequestParam(&quot;image&quot;) MultipartFile file) {
+&nbsp;        try {
+&nbsp;            // Create a new image entity
+<b class="fc">&nbsp;            Image newImage = new Image();</b>
+<b class="fc">&nbsp;            TimeFormatter time = new TimeFormatter();</b>
+<b class="fc">&nbsp;            newImage.setImageName(file.getOriginalFilename());</b>
+<b class="fc">&nbsp;            newImage.setImageSize((int) file.getSize());</b>
+<b class="fc">&nbsp;            newImage.setUploadTime(time.getFormatData());</b>
+&nbsp;            
+&nbsp;            // Save the image metadata
+<b class="fc">&nbsp;            Image savedImage = imageRepository.save(newImage);</b>
+&nbsp;            
+<b class="fc">&nbsp;            return ResponseEntity.ok().body(savedImage);</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            return ResponseEntity.badRequest().body(&quot;Failed to upload image: &quot; + e.getMessage());</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/all&quot;)
+&nbsp;    public ResponseEntity&lt;List&lt;Image&gt;&gt; getAllImages() {
+<b class="nc">&nbsp;        return ResponseEntity.ok(imageRepository.findAll());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/{id}&quot;)
+&nbsp;    public ResponseEntity&lt;Image&gt; getImageById(@PathVariable int id) {
+<b class="fc">&nbsp;        Image img = imageRepository.findById(id);</b>
+<b class="pc">&nbsp;        return img != null ? ResponseEntity.ok(img) : ResponseEntity.notFound().build();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @DeleteMapping(&quot;/{id}&quot;)
+&nbsp;    public ResponseEntity&lt;String&gt; deleteImage(@PathVariable int id) {
+&nbsp;        try {
+<b class="nc">&nbsp;            imageRepository.deleteById(id);</b>
+<b class="nc">&nbsp;            return ResponseEntity.ok(&quot;Image successfully deleted&quot;);</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            return ResponseEntity.badRequest().body(&quot;Failed to delete image: &quot; + e.getMessage());</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @DeleteMapping(&quot;/all&quot;)
+&nbsp;    public ResponseEntity&lt;String&gt; deleteAllImage() {
+&nbsp;        try {
+<b class="nc">&nbsp;            imageRepository.deleteAll();</b>
+<b class="nc">&nbsp;            return ResponseEntity.ok(&quot;All images are succesfully deleted&quot;);</b>
+&nbsp;        } catch (RuntimeException e) {
+<b class="nc">&nbsp;            return ResponseEntity.badRequest().body(&quot;Failed to delete all images: &quot; + e.getMessage());</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-05-07 14:32</div>
+</div>
+</body>
+</html>

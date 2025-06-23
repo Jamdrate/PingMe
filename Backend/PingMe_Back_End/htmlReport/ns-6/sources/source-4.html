@@ -1,0 +1,342 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > SearchController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.Search</a>
+</div>
+
+<h1>Coverage Summary for Class: SearchController (org.Search)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">SearchController</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/26)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/49)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.Search;
+&nbsp;
+&nbsp;import org.Users.Profile;
+&nbsp;import org.Users.UserRepository;
+&nbsp;import org.Users.User;
+&nbsp;import org.Users.ProfileRepository;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.web.bind.annotation.*;
+&nbsp;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;import java.util.stream.Collectors;
+&nbsp;
+&nbsp;/**
+&nbsp; * Controller for handling search-related operations
+&nbsp; */
+&nbsp;@RestController
+<b class="nc">&nbsp;public class SearchController {</b>
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private UserRepository userRepository;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private PostRepository postRepository;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    private ProfileRepository profileRepository;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Search for users by username
+&nbsp;     * @param username The search term to match against usernames
+&nbsp;     * @return List of users whose usernames contain the search term
+&nbsp;     */
+&nbsp;    @GetMapping(&quot;/search/{username}&quot;)
+&nbsp;    public ResponseEntity&lt;List&lt;User&gt;&gt; searchUsers(@PathVariable String username) {
+&nbsp;        try {
+<b class="nc">&nbsp;            if (username == null || username.trim().isEmpty()) {</b>
+<b class="nc">&nbsp;                return ResponseEntity.badRequest().body(new ArrayList&lt;&gt;());</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            String searchQuery = username.toLowerCase().trim();</b>
+<b class="nc">&nbsp;            List&lt;User&gt; matchingUsers = userRepository.findAll().stream()</b>
+<b class="nc">&nbsp;                .filter(user -&gt; user.getUsername().toLowerCase().contains(searchQuery))</b>
+<b class="nc">&nbsp;                .collect(Collectors.toList());</b>
+&nbsp;
+<b class="nc">&nbsp;            return ResponseEntity.ok(matchingUsers);</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            return ResponseEntity.internalServerError().body(new ArrayList&lt;&gt;());</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Search for posts by content
+&nbsp;     * @param title The search term to match against post content
+&nbsp;     * @return List of posts containing the search term
+&nbsp;     */
+&nbsp;    @GetMapping(&quot;/search/post/{title}&quot;)
+&nbsp;    public ResponseEntity&lt;List&lt;Post&gt;&gt; searchPosts(@PathVariable String title) {
+&nbsp;        try {
+<b class="nc">&nbsp;            if (title == null || title.trim().isEmpty()) {</b>
+<b class="nc">&nbsp;                return ResponseEntity.badRequest().body(new ArrayList&lt;&gt;());</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            String searchQuery = title.toLowerCase().trim();</b>
+<b class="nc">&nbsp;            List&lt;Post&gt; matchingPosts = postRepository.findByTitleContaining(searchQuery);</b>
+<b class="nc">&nbsp;            return ResponseEntity.ok(matchingPosts);</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            return ResponseEntity.internalServerError().body(new ArrayList&lt;&gt;());</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Get a specific post by ID
+&nbsp;     * @param id The ID of the post to retrieve
+&nbsp;     * @return The requested post or 404 if not found
+&nbsp;     */
+&nbsp;    @GetMapping(&quot;/users/{username}/post/{id}&quot;)
+&nbsp;    public ResponseEntity &lt;Post&gt; getPostById(@PathVariable Long id) {
+&nbsp;        try {
+<b class="nc">&nbsp;            Post post = postRepository.findById(id).orElse(null);</b>
+<b class="nc">&nbsp;            if (post == null) {</b>
+<b class="nc">&nbsp;                return ResponseEntity.notFound().build();</b>
+&nbsp;            }
+<b class="nc">&nbsp;            return ResponseEntity.ok(post);</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            return ResponseEntity.internalServerError().build();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/allPosts&quot;)
+&nbsp;    public List&lt;Post&gt; getAllPosts()
+&nbsp;    {
+<b class="nc">&nbsp;        List&lt;Post&gt; allPosts = postRepository.findAll();</b>
+&nbsp;
+&nbsp;        /*
+&nbsp;        for (int i = 0; i &lt; allPosts.size(); i++)
+&nbsp;        {
+&nbsp;            postRepository.deleteById(allPosts.get(i).getId());
+&nbsp;        }
+&nbsp;         */
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;        return allPosts;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @GetMapping(&quot;/users/{username}/posts&quot;)
+&nbsp;    public List&lt;Post&gt; getPosts(@PathVariable String username) {
+&nbsp;
+<b class="nc">&nbsp;            List&lt;Post&gt; allPosts = postRepository.findAll();</b>
+<b class="nc">&nbsp;            List&lt;Post&gt; userPosts = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;            Profile profile = profileRepository.findByUsername(username);</b>
+<b class="nc">&nbsp;            ArrayList&lt;Long&gt; postIds = new ArrayList&lt;&gt;();</b>
+&nbsp;
+<b class="nc">&nbsp;            for (int i = 0; i &lt; allPosts.size(); i++)</b>
+&nbsp;            {
+<b class="nc">&nbsp;                if (allPosts.get(i).getUsername() != null &amp;&amp; allPosts.get(i).getUsername().equals(username))</b>
+&nbsp;                {
+<b class="nc">&nbsp;                    userPosts.add(allPosts.get(i));</b>
+&nbsp;                    //postIds.add(allPosts.get(i).getId());
+&nbsp;                }
+&nbsp;            }
+&nbsp;
+&nbsp;            //profile.setPostIds(postIds);
+&nbsp;            //profileRepository.save(profile);
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;            return userPosts;</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Create a new post
+&nbsp;     *
+&nbsp;     * @param username The username of the post creator
+&nbsp;     * @param post     The post data to create
+&nbsp;     * @return The created post or error message
+&nbsp;     */
+&nbsp;    @PostMapping(&quot;/users/{username}/post&quot;)
+&nbsp;    public String createPost(@PathVariable String username, @RequestBody Post post) {
+&nbsp;        //try {
+&nbsp;            // Validate the post data
+<b class="nc">&nbsp;            if (post.getTitle() == null || post.getTitle().trim().isEmpty()) {</b>
+<b class="nc">&nbsp;                return &quot;Post title cannot be empty&quot;;</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            /* Unneeded because you can get the profile from the username
+&nbsp;            // Get the profile of the post creator
+&nbsp;            Profile profile = profileRepository.findByUsername(username);
+&nbsp;            if (profile == null) {
+&nbsp;                return ResponseEntity.badRequest().body(&quot;User profile not found&quot;);
+&nbsp;            }
+&nbsp;
+&nbsp;            // Set the profile for the post
+&nbsp;            post.setProfile(profile);
+&nbsp;
+&nbsp;             */
+&nbsp;
+<b class="nc">&nbsp;            Profile profile = profileRepository.findByUsername(username);</b>
+&nbsp;
+<b class="nc">&nbsp;            if (profile == null)</b>
+&nbsp;            {
+<b class="nc">&nbsp;                return &quot;Failure, profile with that username does not exist&quot;;</b>
+&nbsp;            }
+&nbsp;
+&nbsp;            // Set the current time for the post
+&nbsp;            //TimeFormatter timeFormatter = new TimeFormatter();
+&nbsp;            //post.setTimeUpload(timeFormatter.getFormatData());
+&nbsp;
+<b class="nc">&nbsp;            post.updateTime();</b>
+&nbsp;
+<b class="nc">&nbsp;            post.setUsername(username);</b>
+&nbsp;
+<b class="nc">&nbsp;            post.getHashtags();</b>
+&nbsp;
+<b class="nc">&nbsp;            if (post.getFormattedTime() == null)</b>
+&nbsp;            {
+<b class="nc">&nbsp;                post.updateTime();</b>
+&nbsp;            }
+&nbsp;
+&nbsp;
+&nbsp;            // Save the post
+<b class="nc">&nbsp;            Post savedPost = postRepository.save(post);</b>
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;            profile.addPost(savedPost.getId());</b>
+<b class="nc">&nbsp;            profileRepository.save(profile); // could not serialize exception</b>
+&nbsp;
+&nbsp;
+&nbsp;            /*
+&nbsp;            // Create a response DTO to avoid circular references
+&nbsp;            Map&lt;String, Object&gt; response = new HashMap&lt;&gt;();
+&nbsp;            response.put(&quot;id&quot;, savedPost.getId());
+&nbsp;            response.put(&quot;title&quot;, savedPost.getTitle());
+&nbsp;            response.put(&quot;hashtag&quot;, savedPost.getHashtags());
+&nbsp;            response.put(&quot;description&quot;, savedPost.getDescription());
+&nbsp;            response.put(&quot;timeUpload&quot;, savedPost.getTimeUpload());
+&nbsp;
+&nbsp;            return ResponseEntity.ok(response);
+&nbsp;
+&nbsp;             */
+<b class="nc">&nbsp;            return savedPost.toString();</b>
+&nbsp;            /*
+&nbsp;        } catch (Exception e) {
+&nbsp;            return &quot;Failed to create post: &quot; + e.getMessage();
+&nbsp;        }*/
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Delete a post by ID
+&nbsp;     * @param id The ID of the post to delete
+&nbsp;     * @return Success or error message
+&nbsp;     */
+&nbsp;    @DeleteMapping(&quot;/users/{username}/post/{id}&quot;)
+&nbsp;    public ResponseEntity&lt;String&gt; deletePost(@PathVariable Long id) {
+&nbsp;        try {
+<b class="nc">&nbsp;            if (!postRepository.existsById(id)) {</b>
+<b class="nc">&nbsp;                return ResponseEntity.notFound().build();</b>
+&nbsp;            }
+<b class="nc">&nbsp;            postRepository.deleteById(id);</b>
+<b class="nc">&nbsp;            return ResponseEntity.ok(&quot;Post successfully deleted&quot;);</b>
+&nbsp;        } catch (Exception e) {
+<b class="nc">&nbsp;            return ResponseEntity.badRequest().body(&quot;Failed to delete post: &quot; + e.getMessage());</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-05-07 14:32</div>
+</div>
+</body>
+</html>

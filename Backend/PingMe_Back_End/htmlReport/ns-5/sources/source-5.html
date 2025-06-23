@@ -1,0 +1,177 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > Timeline</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.Users</a>
+</div>
+
+<h1>Coverage Summary for Class: Timeline (org.Users)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Timeline</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    16.7%
+  </span>
+  <span class="absValue">
+    (1/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    28.6%
+  </span>
+  <span class="absValue">
+    (2/7)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.Users;
+&nbsp;
+&nbsp;import jakarta.persistence.Column;
+&nbsp;import jakarta.persistence.Entity;
+&nbsp;import jakarta.persistence.Id;
+&nbsp;//import org.search.Post;
+&nbsp;//import org.search.Tweet;
+&nbsp;//import org.search.Tweet;
+&nbsp;import org.Search.Post;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.hibernate.annotations.Type;
+&nbsp;import io.hypersistence.utils.hibernate.type.json.JsonType;
+&nbsp;import org.springframework.transaction.annotation.Transactional;
+&nbsp;
+&nbsp;import java.lang.reflect.Array;
+&nbsp;import java.util.ArrayList;
+&nbsp;
+&nbsp;@Entity
+&nbsp;public class Timeline
+&nbsp;{
+&nbsp;
+&nbsp;    @Id
+&nbsp;    private String username;
+&nbsp;
+&nbsp;    //@Type(JsonType.class)
+&nbsp;    @Column(columnDefinition = &quot;LONGTEXT&quot;)
+&nbsp;    private ArrayList&lt;Post&gt; postFeed;
+&nbsp;
+&nbsp;    public Timeline()
+<b class="nc">&nbsp;    {</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    public Timeline(String username)
+<b class="fc">&nbsp;    {</b>
+<b class="fc">&nbsp;        this.username = username;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    public void setFeed(ArrayList&lt;Post&gt; newFeed)
+&nbsp;    {
+&nbsp;        // needs to go through all the people they are following and retrieve the posts and put them into the postFeed
+&nbsp;        // variable in chronological order
+&nbsp;
+&nbsp;        //ArrayList&lt;Post&gt; newFeed = new ArrayList&lt;&gt;();
+&nbsp;
+&nbsp;
+&nbsp;        // may need to be done in the TimelineController class instead of here, for now this will just be a set function
+&nbsp;
+<b class="nc">&nbsp;        this.postFeed = newFeed;</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    @Transactional
+<b class="nc">&nbsp;    public ArrayList&lt;Post&gt; getFeed(){ return postFeed; }</b>
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;    public void setUsername(String username)
+&nbsp;    {
+<b class="nc">&nbsp;        this.username = username;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getUsername()
+&nbsp;    {
+<b class="nc">&nbsp;        return username;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-04-20 00:04</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,206 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > AnalyticsService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.Analytics</a>
+</div>
+
+<h1>Coverage Summary for Class: AnalyticsService (org.Analytics)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">AnalyticsService</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    83.3%
+  </span>
+  <span class="absValue">
+    (10/12)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    41%
+  </span>
+  <span class="absValue">
+    (41/100)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    22.7%
+  </span>
+  <span class="absValue">
+    (10/44)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.Analytics;
+&nbsp;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;import org.springframework.transaction.annotation.Transactional;
+&nbsp;
+&nbsp;@Service
+&nbsp;public class AnalyticsService {
+&nbsp;    
+&nbsp;    private final AnalyticsRepository analyticsRepository;
+&nbsp;    
+&nbsp;    @Autowired
+<b class="nc">&nbsp;    public AnalyticsService(AnalyticsRepository analyticsRepository) {</b>
+<b class="nc">&nbsp;        this.analyticsRepository = analyticsRepository;</b>
+&nbsp;    }
+&nbsp;    
+&nbsp;    @Transactional
+&nbsp;    public Analytics getAnalytics() {
+<b class="pc">&nbsp;        return analyticsRepository.findAll().stream()</b>
+<b class="nc">&nbsp;                .findFirst()</b>
+<b class="nc">&nbsp;                .orElseGet(() -&gt; {</b>
+<b class="nc">&nbsp;                    Analytics analytics = new Analytics();</b>
+<b class="nc">&nbsp;                    return analyticsRepository.save(analytics);</b>
+&nbsp;                });
+&nbsp;    }
+&nbsp;    
+&nbsp;    @Transactional
+&nbsp;    public void trackNewUser() {
+<b class="pc">&nbsp;        Analytics analytics = getAnalytics();</b>
+<b class="nc">&nbsp;        analytics.incrementTotalUsers();</b>
+<b class="nc">&nbsp;        analytics.incrementNewUsersToday();</b>
+<b class="nc">&nbsp;        analyticsRepository.save(analytics);</b>
+<b class="nc">&nbsp;    }</b>
+&nbsp;    
+&nbsp;    @Transactional
+&nbsp;    public void trackActiveUser() {
+<b class="pc">&nbsp;        Analytics analytics = getAnalytics();</b>
+<b class="nc">&nbsp;        analytics.incrementActiveUsers();</b>
+<b class="nc">&nbsp;        analyticsRepository.save(analytics);</b>
+<b class="nc">&nbsp;    }</b>
+&nbsp;    
+&nbsp;    @Transactional
+&nbsp;    public void trackNewPost() {
+<b class="pc">&nbsp;        Analytics analytics = getAnalytics();</b>
+<b class="nc">&nbsp;        analytics.incrementTotalPosts();</b>
+<b class="nc">&nbsp;        analyticsRepository.save(analytics);</b>
+<b class="nc">&nbsp;    }</b>
+&nbsp;    
+&nbsp;    @Transactional
+&nbsp;    public void trackNewComment() {
+<b class="pc">&nbsp;        Analytics analytics = getAnalytics();</b>
+<b class="nc">&nbsp;        analytics.incrementTotalComments();</b>
+<b class="nc">&nbsp;        analyticsRepository.save(analytics);</b>
+<b class="nc">&nbsp;    }</b>
+&nbsp;    
+&nbsp;    @Transactional
+&nbsp;    public void trackNewLike() {
+<b class="pc">&nbsp;        Analytics analytics = getAnalytics();</b>
+<b class="nc">&nbsp;        analytics.incrementTotalLikes();</b>
+<b class="nc">&nbsp;        analyticsRepository.save(analytics);</b>
+<b class="nc">&nbsp;    }</b>
+&nbsp;    
+&nbsp;    @Transactional
+&nbsp;    public void trackNewShare() {
+<b class="pc">&nbsp;        Analytics analytics = getAnalytics();</b>
+<b class="nc">&nbsp;        analytics.incrementTotalShares();</b>
+<b class="nc">&nbsp;        analyticsRepository.save(analytics);</b>
+<b class="nc">&nbsp;    }</b>
+&nbsp;    
+&nbsp;    @Transactional
+&nbsp;    public void trackSession(double durationInMinutes) {
+<b class="pc">&nbsp;        Analytics analytics = getAnalytics();</b>
+<b class="nc">&nbsp;        analytics.updateSessionMetrics(durationInMinutes);</b>
+<b class="nc">&nbsp;        analyticsRepository.save(analytics);</b>
+<b class="nc">&nbsp;    }</b>
+&nbsp;    
+&nbsp;    @Transactional
+&nbsp;    public void updateConcurrentUsers(int currentUsers) {
+<b class="pc">&nbsp;        Analytics analytics = getAnalytics();</b>
+<b class="nc">&nbsp;        analytics.updatePeakConcurrentUsers(currentUsers);</b>
+<b class="nc">&nbsp;        analyticsRepository.save(analytics);</b>
+<b class="nc">&nbsp;    }</b>
+&nbsp;    
+&nbsp;    @Transactional
+&nbsp;    public void resetDailyMetrics() {
+<b class="pc">&nbsp;        Analytics analytics = getAnalytics();</b>
+<b class="nc">&nbsp;        analytics.setNewUsersToday(0);</b>
+<b class="nc">&nbsp;        analyticsRepository.save(analytics);</b>
+<b class="nc">&nbsp;    }</b>
+&nbsp;} 
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-05-07 14:32</div>
+</div>
+</body>
+</html>

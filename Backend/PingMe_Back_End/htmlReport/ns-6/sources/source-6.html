@@ -1,0 +1,111 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > PostRepository</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.Search</a>
+</div>
+
+<h1>Coverage Summary for Class: PostRepository (org.Search)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">PostRepository$MockitoMock$rt7NcE8t</td>
+  </tr>
+  <tr>
+    <td class="name">PostRepository$MockitoMock$rt7NcE8t$auxiliary$FNSnwFN4</td>
+  </tr>
+  <tr>
+    <td class="name">PostRepository$MockitoMock$rt7NcE8t$auxiliary$PwIWOmQe</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.Search;
+&nbsp;
+&nbsp;import org.springframework.data.jpa.repository.JpaRepository;
+&nbsp;import org.springframework.stereotype.Repository;
+&nbsp;import org.springframework.transaction.annotation.Transactional;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;import org.springframework.data.jpa.repository.Query;
+&nbsp;import org.springframework.data.repository.query.Param;
+&nbsp;
+&nbsp;@Repository
+&nbsp;public interface PostRepository extends JpaRepository&lt;Post, Long&gt; {
+&nbsp;    List&lt;Post&gt; findByUsername(String username);
+&nbsp;    
+&nbsp;    List&lt;Post&gt; findByTitleContainingOrDescriptionContaining(String titleKeyword, String descriptionKeyword);
+&nbsp;
+&nbsp;    //Post findById(Long id);
+&nbsp;
+&nbsp;    @Query(&quot;SELECT p FROM Post p LEFT JOIN FETCH p.hashtags WHERE p.id = :id&quot;)
+&nbsp;    Optional&lt;Post&gt; findByIdWithHashtags(@Param(&quot;id&quot;) Long id);
+&nbsp;
+&nbsp;    List&lt;Post&gt; findByTitleContaining(String title);
+&nbsp;
+&nbsp;    @Transactional
+&nbsp;    void deleteByUsername(String username);
+&nbsp;    
+&nbsp;    @Query(&quot;SELECT p FROM Post p JOIN p.hashtags h WHERE h.tag LIKE %:tag%&quot;)
+&nbsp;    List&lt;Post&gt; findByHashtagsTagContaining(@Param(&quot;tag&quot;) String tag);
+&nbsp;    
+&nbsp;    List&lt;Post&gt; findAllByOrderByIdDesc();
+&nbsp;
+&nbsp;    void deleteById(int id);
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-05-07 14:32</div>
+</div>
+</body>
+</html>

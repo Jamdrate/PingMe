@@ -1,0 +1,804 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > UserController</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">org.Users</a>
+</div>
+
+<h1>Coverage Summary for Class: UserController (org.Users)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Branch, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">UserController</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    22.2%
+  </span>
+  <span class="absValue">
+    (4/18)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    8.2%
+  </span>
+  <span class="absValue">
+    (13/158)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    13%
+  </span>
+  <span class="absValue">
+    (36/277)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package org.Users;
+&nbsp;
+&nbsp;import java.security.MessageDigest;
+&nbsp;import java.security.NoSuchAlgorithmException;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Map;
+&nbsp;
+&nbsp;import org.Search.Post;
+&nbsp;import org.Search.PostRepository;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;
+&nbsp;import org.springframework.context.annotation.Bean;
+&nbsp;import org.springframework.stereotype.Component;
+&nbsp;import org.springframework.web.bind.annotation.*;
+&nbsp;
+&nbsp;
+&nbsp;/**
+&nbsp; * There needs to be more work done to connect the profile, timeline, and user classes. when a user is deleted it should
+&nbsp; * delete their profile and timeline too, but neither of those should be deleted on their own.
+&nbsp; * Each needs to have its own table since they cant store them nested without issues, which requires each to have a
+&nbsp; * controller and repository class. they should be able to be all made at once when a new user is created and they should
+&nbsp; * be linked by the username (and with profile the name as well) so that must be updated when the user is updated here too.
+&nbsp; * also timeline has a following variable
+&nbsp; *
+&nbsp; */
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;@RestController
+&nbsp;@Component
+&nbsp;public class UserController {
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;    public UserController(/*main.java.HashCreator hashCreator*/) {</b>
+&nbsp;        //this.hashCreator = hashCreator;
+&nbsp;    }
+&nbsp;
+&nbsp;    //@Bean
+<b class="fc">&nbsp;    HashCreator hashCreator = new HashCreator();</b>
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    UserRepository userRepository;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    ProfileRepository profileRepository;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    TimelineRepository timelineRepository;
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    PostRepository postRepository;
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;    private String success = &quot;{\&quot;message\&quot;:\&quot;success\&quot;}&quot;;</b>
+<b class="fc">&nbsp;    private String failure = &quot;{\&quot;message\&quot;:\&quot;failure\&quot;}&quot;;</b>
+&nbsp;
+&nbsp;    @GetMapping(path = &quot;/users&quot;)
+&nbsp;    public List&lt;User&gt; getAllUsers() {
+<b class="nc">&nbsp;        return userRepository.findAll();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PostMapping(path = &quot;/signup&quot;)
+&nbsp;    String createUser(@RequestBody User user) throws NoSuchAlgorithmException {
+<b class="pc">&nbsp;        if (user == null || user.getUsername() == null)</b>
+<b class="nc">&nbsp;            return &quot;User information incorrect&quot;;</b>
+<b class="fc">&nbsp;        user.setPassword(hashCreator.createSHAHash(user.getPassword()));</b>
+&nbsp;
+<b class="pc">&nbsp;        if (userRepository.findByUsername(user.getUsername()) != null)</b>
+<b class="nc">&nbsp;            return &quot;User with username already exists&quot;;</b>
+<b class="fc">&nbsp;        userRepository.save(user);</b>
+&nbsp;
+<b class="fc">&nbsp;        Profile profile = new Profile(user.getUsername(), user.getName());</b>
+<b class="fc">&nbsp;        profileRepository.save(profile);</b>
+&nbsp;
+<b class="fc">&nbsp;        Timeline timeline = new Timeline(user.getUsername());</b>
+<b class="fc">&nbsp;        timelineRepository.save(timeline);</b>
+&nbsp;
+<b class="fc">&nbsp;        return &quot;User successfully signed up&quot;;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @PostMapping(path = &quot;/login&quot;)
+&nbsp;    String login(@RequestBody Map&lt;String, String&gt; info) throws NoSuchAlgorithmException {
+<b class="fc">&nbsp;        String username = info.get(&quot;username&quot;);</b>
+<b class="fc">&nbsp;        String email = info.get(&quot;email&quot;);</b>
+&nbsp;        User user;
+<b class="pc">&nbsp;        if (email == null &amp;&amp; username != null) {</b>
+<b class="fc">&nbsp;            user = userRepository.findByUsername(username);</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            user = userRepository.findByEmail(email);</b>
+&nbsp;        }
+<b class="pc">&nbsp;        if (user == null)</b>
+<b class="nc">&nbsp;            return &quot;No user with that login exists&quot;;</b>
+&nbsp;
+<b class="fc">&nbsp;        String password = info.get(&quot;password&quot;);</b>
+&nbsp;
+&nbsp;
+<b class="pc">&nbsp;        if (password == null)</b>
+<b class="nc">&nbsp;            return &quot;No password provided&quot;;</b>
+&nbsp;
+&nbsp;        //check passwords
+<b class="fc">&nbsp;        if (MessageDigest.isEqual(hashCreator.createSHAHash(password).getBytes(), user.getPassword().getBytes())) {</b>
+&nbsp;            // needs to create a token
+&nbsp;
+<b class="fc">&nbsp;            System.out.println(&quot;Login success&quot;);</b>
+<b class="fc">&nbsp;            return &quot;Password correct&quot;;</b>
+&nbsp;        } else {
+<b class="fc">&nbsp;            System.out.println(&quot;Login failure&quot;);</b>
+<b class="fc">&nbsp;            return &quot;Password Incorrect&quot;;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    @GetMapping(path = &quot;/users/{username}&quot;)
+&nbsp;    User getUserByUsername(@PathVariable String username) {
+<b class="nc">&nbsp;        return userRepository.findByUsername(username);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;    @PutMapping(&quot;/users/{username}&quot;)
+&nbsp;    User updateUser(@PathVariable String username, @RequestBody Map&lt;String, Object&gt; info) throws NoSuchAlgorithmException {
+<b class="nc">&nbsp;        User user = userRepository.findByUsername(username);</b>
+<b class="nc">&nbsp;        if (user == null)</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;
+<b class="nc">&nbsp;        Profile profile = profileRepository.findByUsername(username);</b>
+&nbsp;        //if (profile == null)
+&nbsp;            //return null;
+&nbsp;
+<b class="nc">&nbsp;        if (!MessageDigest.isEqual(( hashCreator.createSHAHash( (String) info.get(&quot;password&quot;))).getBytes(), userRepository.findByUsername(username).getPassword().getBytes()))</b>
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;        User request = new User((String) info.get(&quot;name&quot;), (String) info.get(&quot;username&quot;), (String) info.get(&quot;email&quot;), (String) info.get(&quot;password&quot;));</b>
+&nbsp;
+&nbsp;        // update friends if there is a provided list
+<b class="nc">&nbsp;        if (info.containsKey(&quot;friends&quot;)) {</b>
+<b class="nc">&nbsp;            if (!user.getFriends().equals(info.get(&quot;friends&quot;))) {</b>
+&nbsp;                // needs to compare them and update the other users accordingly
+<b class="nc">&nbsp;                List&lt;String&gt; original = user.getFriends().stream().toList();</b>
+<b class="nc">&nbsp;                int originalIndex = 0;</b>
+<b class="nc">&nbsp;                List&lt;String&gt; updated = ((ArrayList&lt;String&gt;) info.get(&quot;friends&quot;)).stream().toList();</b>
+<b class="nc">&nbsp;                int updatedIndex = 0;</b>
+<b class="nc">&nbsp;                ArrayList&lt;String&gt; complete = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;                int loopVar = 0;</b>
+&nbsp;
+<b class="nc">&nbsp;                while (originalIndex &lt; original.size() || updatedIndex &lt; updated.size()) {</b>
+&nbsp;                    // check if there are any friends that are not in the original then add them
+&nbsp;                    /*
+&nbsp;                    if (updatedIndex &lt; updated.size() &amp;&amp; !original.contains(updated.get(updatedIndex))) {
+&nbsp;                        // needs to add for the other user too maybe? unless that is bad
+&nbsp;                        complete.add(updated.get(updatedIndex));
+&nbsp;                        updatedIndex++;
+&nbsp;                    } */
+&nbsp;                    // check if any friends are the same
+<b class="nc">&nbsp;                    if (updatedIndex &lt; updated.size() &amp;&amp; original.contains(updated.get(updatedIndex))) {</b>
+<b class="nc">&nbsp;                        complete.add(updated.get(updatedIndex));</b>
+<b class="nc">&nbsp;                        updatedIndex++;</b>
+&nbsp;                    }
+&nbsp;                    // check if any friends were removed
+<b class="nc">&nbsp;                    if (originalIndex &lt; original.size() &amp;&amp; !updated.contains(original.get(originalIndex))) {</b>
+&nbsp;                        // must remove them from their friend&#39;s list as well
+<b class="nc">&nbsp;                        User friend = userRepository.findByUsername(original.get(originalIndex));</b>
+<b class="nc">&nbsp;                        friend.removeFriend(user.getUsername());</b>
+<b class="nc">&nbsp;                        originalIndex++;</b>
+&nbsp;                    }
+<b class="nc">&nbsp;                    loopVar++;</b>
+<b class="nc">&nbsp;                    if (loopVar &gt; original.size() + updated.size() + 1)</b>
+&nbsp;                    {
+&nbsp;                        break;
+&nbsp;                    }
+&nbsp;                }
+<b class="nc">&nbsp;                user.setFriends(complete);</b>
+&nbsp;            }
+&nbsp;        } else
+&nbsp;        {
+&nbsp;            // retain original list
+&nbsp;        }
+&nbsp;        // update followers if there is a provided list
+<b class="nc">&nbsp;        if (info.containsKey(&quot;followers&quot;)) {</b>
+<b class="nc">&nbsp;            if (!user.getFollowers().equals(info.get(&quot;followers&quot;))) {</b>
+&nbsp;                // needs to compare them and update the other users accordingly
+<b class="nc">&nbsp;                List&lt;String&gt; original = user.getFollowers().stream().toList();</b>
+<b class="nc">&nbsp;                int originalIndex = 0;</b>
+<b class="nc">&nbsp;                List&lt;String&gt; updated = ((ArrayList&lt;String&gt;) info.get(&quot;followers&quot;)).stream().toList();</b>
+<b class="nc">&nbsp;                int updatedIndex = 0;</b>
+<b class="nc">&nbsp;                ArrayList&lt;String&gt; complete = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;                int loopVar = 0;</b>
+&nbsp;
+<b class="nc">&nbsp;                while (originalIndex &lt; original.size() || updatedIndex &lt; updated.size()) {</b>
+&nbsp;                    // check if there are any followers that are not in the original then add them
+&nbsp;                    /*
+&nbsp;                    if (updatedIndex &lt; updated.size() &amp;&amp; !original.contains(updated.get(updatedIndex))) {
+&nbsp;                        // needs to add for the other user too maybe? unless that is bad
+&nbsp;                        complete.add(updated.get(updatedIndex));
+&nbsp;                        updatedIndex++;
+&nbsp;                    } */
+&nbsp;                    // check if any followers are the same
+<b class="nc">&nbsp;                    if (updatedIndex &lt; updated.size() &amp;&amp; original.contains(updated.get(updatedIndex))) {</b>
+<b class="nc">&nbsp;                        complete.add(updated.get(updatedIndex));</b>
+<b class="nc">&nbsp;                        updatedIndex++;</b>
+&nbsp;                    }
+&nbsp;                    // check if any followers were removed
+<b class="nc">&nbsp;                    if (originalIndex &lt; original.size() &amp;&amp; !updated.contains(original.get(originalIndex))) {</b>
+&nbsp;                        // must remove them from their friend&#39;s list as well
+<b class="nc">&nbsp;                        User follower = userRepository.findByUsername(original.get(originalIndex));</b>
+<b class="nc">&nbsp;                        follower.unfollow(user.getUsername());</b>
+<b class="nc">&nbsp;                        originalIndex++;</b>
+&nbsp;                    }
+<b class="nc">&nbsp;                    loopVar++;</b>
+<b class="nc">&nbsp;                    if (loopVar &gt; original.size() + updated.size() + 1)</b>
+&nbsp;                    {
+&nbsp;                        break;
+&nbsp;                    }
+&nbsp;                }
+<b class="nc">&nbsp;                user.setFollowers(complete);</b>
+&nbsp;
+&nbsp;            }
+&nbsp;        } else
+&nbsp;        {
+&nbsp;            // retain original list
+&nbsp;        }
+&nbsp;        // update following if there is a provided list
+<b class="nc">&nbsp;        if (info.containsKey(&quot;following&quot;)) {</b>
+<b class="nc">&nbsp;            if (!user.getFollowing().equals(info.get(&quot;following&quot;))) {</b>
+&nbsp;                // needs to compare them and update the other users accordingly
+<b class="nc">&nbsp;                List&lt;String&gt; original = user.getFollowing().stream().toList();</b>
+<b class="nc">&nbsp;                int originalIndex = 0;</b>
+<b class="nc">&nbsp;                List&lt;String&gt; updated = ((ArrayList&lt;String&gt;) info.get(&quot;following&quot;)).stream().toList();</b>
+<b class="nc">&nbsp;                int updatedIndex = 0;</b>
+<b class="nc">&nbsp;                ArrayList&lt;String&gt; complete = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;                int loopVar = 0;</b>
+&nbsp;
+<b class="nc">&nbsp;                while (originalIndex &lt; original.size() || updatedIndex &lt; updated.size()) {</b>
+&nbsp;                    // check if there are any accounts they are following that are not in the original then add them
+&nbsp;
+<b class="nc">&nbsp;                    if (updatedIndex &lt; updated.size() &amp;&amp; !original.contains(updated.get(updatedIndex))) {</b>
+&nbsp;                        // needs to add for the other user too because this does not require them to follow back
+<b class="nc">&nbsp;                        User following = userRepository.findByUsername(updated.get(updatedIndex));</b>
+<b class="nc">&nbsp;                        following.addFollower(user.getUsername());</b>
+<b class="nc">&nbsp;                        complete.add(updated.get(updatedIndex));</b>
+<b class="nc">&nbsp;                        updatedIndex++;</b>
+&nbsp;                    }
+&nbsp;                    // check if any accounts they are following are the same
+<b class="nc">&nbsp;                    if (updatedIndex &lt; updated.size() &amp;&amp; original.contains(updated.get(updatedIndex))) {</b>
+<b class="nc">&nbsp;                        complete.add(updated.get(updatedIndex));</b>
+<b class="nc">&nbsp;                        updatedIndex++;</b>
+&nbsp;                    }
+&nbsp;                    // check if any accounts they are following were removed
+<b class="nc">&nbsp;                    if (originalIndex &lt; original.size() &amp;&amp; !updated.contains(original.get(originalIndex))) {</b>
+&nbsp;                        // must remove them from their following list as well
+<b class="nc">&nbsp;                        User following = userRepository.findByUsername(original.get(originalIndex));</b>
+<b class="nc">&nbsp;                        following.removeFollower(user.getUsername());</b>
+<b class="nc">&nbsp;                        originalIndex++;</b>
+&nbsp;                    }
+<b class="nc">&nbsp;                    loopVar++;</b>
+<b class="nc">&nbsp;                    if (loopVar &gt; original.size() + updated.size() + 1)</b>
+&nbsp;                    {
+&nbsp;                        break;
+&nbsp;                    }
+&nbsp;                }
+<b class="nc">&nbsp;                user.setFollowing(complete);</b>
+&nbsp;
+&nbsp;                // timeline needs to update the following too. or do that in timeline controller by just requesting every time ig
+&nbsp;
+&nbsp;            }
+&nbsp;        } else
+&nbsp;        {
+&nbsp;            // retain original list
+&nbsp;        }
+&nbsp;
+&nbsp;        // update the standard information
+<b class="nc">&nbsp;        if (user.getName() == null || !user.getName().equals(request.getName())) {</b>
+<b class="nc">&nbsp;            user.setName(request.getName());</b>
+<b class="nc">&nbsp;            profile.setName(request.getName());</b>
+&nbsp;        }
+<b class="nc">&nbsp;        if (!user.getEmail().equals(request.getEmail())) {</b>
+<b class="nc">&nbsp;            user.setEmail(request.getEmail());</b>
+&nbsp;        }
+<b class="nc">&nbsp;        if (!user.getPassword().equals( hashCreator.createSHAHash(request.getPassword())) ) {</b>
+<b class="nc">&nbsp;            user.setPassword(hashCreator.createSHAHash(request.getPassword()));</b>
+&nbsp;            //user.setPassword(request.getPassword());
+&nbsp;        }
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;        userRepository.save(user);</b>
+&nbsp;
+<b class="nc">&nbsp;        profileRepository.save(profile);</b>
+&nbsp;
+&nbsp;
+&nbsp;        /*
+&nbsp;         *
+&nbsp;         *   needs to update the user&#39;s profile username as well!!
+&nbsp;         *
+&nbsp;         */
+&nbsp;
+<b class="nc">&nbsp;        if (!user.getUsername().equals(request.getUsername())) {</b>
+&nbsp;            // needs to make sure to update ALL the information, this is not enough
+&nbsp;            // mostly the usernames that the followers and friends have stored.
+<b class="nc">&nbsp;            userRepository.deleteByUsername(user.getUsername());</b>
+<b class="nc">&nbsp;            user.setUsername(request.getUsername());</b>
+<b class="nc">&nbsp;            userRepository.save(user);</b>
+&nbsp;
+&nbsp;            // may have an issue with deleting the user so comment it out
+&nbsp;            //profileRepository.deleteByUsername(username);
+<b class="nc">&nbsp;            profile.setUsername(user.getUsername());</b>
+<b class="nc">&nbsp;            profileRepository.save(profile);</b>
+&nbsp;
+<b class="nc">&nbsp;            List&lt;Post&gt; posts = new ArrayList&lt;&gt;();</b>
+&nbsp;
+<b class="nc">&nbsp;            for (int i = 0; i &lt; profile.getPostIds().size(); i++)</b>
+&nbsp;            {
+<b class="nc">&nbsp;                posts.add(postRepository.findById(profile.getPostIds().get(i)).get());</b>
+&nbsp;            }
+&nbsp;
+<b class="nc">&nbsp;            for (int i = 0; i &lt; posts.size(); i++)</b>
+&nbsp;            {
+<b class="nc">&nbsp;                Post post = posts.get(i);</b>
+<b class="nc">&nbsp;                post.setUsername(profile.getUsername());</b>
+<b class="nc">&nbsp;                postRepository.save(post);</b>
+&nbsp;                // might need to delete then save again idk
+&nbsp;            }
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;            Timeline timeline = timelineRepository.findByUsername(username);</b>
+<b class="nc">&nbsp;            timelineRepository.deleteByUsername(username);</b>
+<b class="nc">&nbsp;            timeline.setUsername(user.getUsername());</b>
+<b class="nc">&nbsp;            timelineRepository.save(timeline);</b>
+&nbsp;
+&nbsp;
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        return userRepository.findByUsername(user.getUsername());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;    @DeleteMapping(path = &quot;/users/{username}&quot;)
+&nbsp;    String deleteUser(@PathVariable String username, @RequestBody Map&lt;String, String&gt; info) throws NoSuchAlgorithmException {
+<b class="nc">&nbsp;        if (userRepository.findByUsername(username) == null)</b>
+&nbsp;        {
+<b class="nc">&nbsp;            return &quot;User does not exist&quot;;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        if (!MessageDigest.isEqual(( hashCreator.createSHAHash( (String) info.get(&quot;password&quot;))).getBytes(), userRepository.findByUsername(username).getPassword().getBytes()))</b>
+&nbsp;        {
+<b class="nc">&nbsp;            return &quot;Password incorrect&quot;;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        userRepository.deleteByUsername(username);</b>
+<b class="nc">&nbsp;        profileRepository.deleteByUsername(username);</b>
+<b class="nc">&nbsp;        timelineRepository.deleteByUsername(username);</b>
+<b class="nc">&nbsp;        return &quot;User deleted successfully&quot;;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    @GetMapping(path = &quot;/users/{username}/friends&quot;)
+&nbsp;    ArrayList&lt;User&gt; getFriendsByUsername(@PathVariable String username) {
+<b class="nc">&nbsp;        User user = userRepository.findByUsername(username);</b>
+<b class="nc">&nbsp;        if (user != null) {</b>
+<b class="nc">&nbsp;            ArrayList&lt;User&gt; friends = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;            for(int i = 0; i &lt; user.getFriends().size(); i++)</b>
+&nbsp;            {
+<b class="nc">&nbsp;                friends.add(userRepository.findByUsername(user.getFriends().get(i)));</b>
+&nbsp;            }
+<b class="nc">&nbsp;            return friends;</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    @PostMapping(path = &quot;/users/{username}/friends&quot;)
+&nbsp;    String addFriendByUsername(@PathVariable String username, @RequestBody Map&lt;String, String&gt; info) throws NoSuchAlgorithmException {
+<b class="nc">&nbsp;        String friendUsername = info.get(&quot;friendUsername&quot;);</b>
+<b class="nc">&nbsp;        if (userRepository.findByUsername(username) == null)</b>
+&nbsp;        {
+<b class="nc">&nbsp;            return &quot;User does not exist&quot;;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        if (!MessageDigest.isEqual(( hashCreator.createSHAHash( (String) info.get(&quot;password&quot;))).getBytes(), userRepository.findByUsername(username).getPassword().getBytes()))</b>
+&nbsp;        {
+<b class="nc">&nbsp;            return &quot;Password incorrect&quot;;</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        User user = userRepository.findByUsername(username);</b>
+<b class="nc">&nbsp;        User friend = userRepository.findByUsername(friendUsername);</b>
+<b class="nc">&nbsp;        if (friend != null &amp;&amp; user != null) {</b>
+&nbsp;            //user.addFriend(friendUsername);
+<b class="nc">&nbsp;            user.addFollower(friendUsername);</b>
+<b class="nc">&nbsp;            user.follow(friendUsername);</b>
+<b class="nc">&nbsp;            userRepository.deleteByUsername(username);</b>
+<b class="nc">&nbsp;            userRepository.save(user);</b>
+&nbsp;            //friend.addFriend(username);
+<b class="nc">&nbsp;            friend.addFollower(username);</b>
+<b class="nc">&nbsp;            friend.follow(username);</b>
+<b class="nc">&nbsp;            userRepository.deleteByUsername(friendUsername);</b>
+<b class="nc">&nbsp;            userRepository.save(friend);</b>
+&nbsp;
+<b class="nc">&nbsp;            return &quot;Friend successfully added&quot;;</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            return &quot;Error: User is null&quot;;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    @DeleteMapping(path = &quot;/users/{username}/friends&quot;)
+&nbsp;    String deleteFriendByUsername(@PathVariable String username, @RequestBody Map&lt;String, String&gt; info) throws NoSuchAlgorithmException {
+<b class="nc">&nbsp;        User user = userRepository.findByUsername(username);</b>
+<b class="nc">&nbsp;        String friendUsername = info.get(&quot;friendUsername&quot;);</b>
+<b class="nc">&nbsp;        User friend = userRepository.findByUsername(friendUsername);</b>
+<b class="nc">&nbsp;        if (user == null)</b>
+&nbsp;        {
+<b class="nc">&nbsp;            return &quot;User does not exist&quot;;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        if (!MessageDigest.isEqual(( hashCreator.createSHAHash( (String) info.get(&quot;password&quot;))).getBytes(), userRepository.findByUsername(username).getPassword().getBytes()))</b>
+&nbsp;        {
+<b class="nc">&nbsp;            return &quot;Password incorrect&quot;;</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        if (friend != null) {</b>
+<b class="nc">&nbsp;            user.removeFollower(friendUsername);</b>
+<b class="nc">&nbsp;            user.unfollow(friendUsername);</b>
+<b class="nc">&nbsp;            userRepository.deleteByUsername(username);</b>
+<b class="nc">&nbsp;            userRepository.save(user);</b>
+<b class="nc">&nbsp;            friend.removeFollower(username);</b>
+<b class="nc">&nbsp;            friend.unfollow(username);</b>
+<b class="nc">&nbsp;            userRepository.deleteByUsername(friendUsername);</b>
+<b class="nc">&nbsp;            userRepository.save(friend);</b>
+&nbsp;
+<b class="nc">&nbsp;            return &quot;Friend successfully removed&quot;;</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            return &quot;Error: User is null&quot;;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    @GetMapping(path = &quot;/users/{username}/followers&quot;)
+&nbsp;    ArrayList&lt;User&gt; getFollowersByUsername(@PathVariable String username) {
+<b class="nc">&nbsp;        User user = userRepository.findByUsername(username);</b>
+<b class="nc">&nbsp;        if (user != null) {</b>
+<b class="nc">&nbsp;            ArrayList&lt;User&gt; followers = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;            for(int i = 0; i &lt; user.getFollowers().size(); i++)</b>
+&nbsp;            {
+<b class="nc">&nbsp;                followers.add(userRepository.findByUsername(user.getFollowers().get(i)));</b>
+&nbsp;            }
+<b class="nc">&nbsp;            return followers;</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    // unneeded functionality
+&nbsp;    // gonna add it anyways
+&nbsp;    @PostMapping(path = &quot;/users/{username}/followers&quot;)
+&nbsp;    String addFollowerByUsername(@PathVariable String username, @RequestBody Map&lt;String, String&gt; info) throws NoSuchAlgorithmException {
+<b class="nc">&nbsp;        User user = userRepository.findByUsername(username);</b>
+<b class="nc">&nbsp;        String followerUsername = info.get(&quot;followerUsername&quot;);</b>
+<b class="nc">&nbsp;        User follower = userRepository.findByUsername(followerUsername);</b>
+<b class="nc">&nbsp;        if (user == null)</b>
+&nbsp;        {
+<b class="nc">&nbsp;            return &quot;User does not exist&quot;;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        if (!MessageDigest.isEqual(( hashCreator.createSHAHash( (String) info.get(&quot;password&quot;))).getBytes(), userRepository.findByUsername(username).getPassword().getBytes()))</b>
+&nbsp;        {
+<b class="nc">&nbsp;            return &quot;Password incorrect&quot;;</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        if (follower != null)</b>
+&nbsp;        {
+<b class="nc">&nbsp;            user.addFollower(followerUsername);</b>
+<b class="nc">&nbsp;            follower.follow(username);</b>
+&nbsp;
+<b class="nc">&nbsp;            userRepository.deleteByUsername(username);</b>
+<b class="nc">&nbsp;            userRepository.save(user);</b>
+&nbsp;
+<b class="nc">&nbsp;            userRepository.deleteByUsername(followerUsername);</b>
+<b class="nc">&nbsp;            userRepository.save(follower);</b>
+&nbsp;
+<b class="nc">&nbsp;            return &quot;Follower added successfully&quot;;</b>
+&nbsp;        } else
+&nbsp;        {
+<b class="nc">&nbsp;            return &quot;Error: User is null&quot;;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;    @DeleteMapping(path = &quot;/users/{username}/followers&quot;)
+&nbsp;    String deleteFollowerByUsername(@PathVariable String username, @RequestBody Map&lt;String, String&gt; info) throws NoSuchAlgorithmException {
+<b class="nc">&nbsp;        User user = userRepository.findByUsername(username);</b>
+<b class="nc">&nbsp;        String followerUsername = info.get(&quot;followerUsername&quot;);</b>
+<b class="nc">&nbsp;        User follower = userRepository.findByUsername(followerUsername);</b>
+<b class="nc">&nbsp;        if (user == null)</b>
+&nbsp;        {
+<b class="nc">&nbsp;            return &quot;User does not exist&quot;;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        if (!MessageDigest.isEqual(( hashCreator.createSHAHash( (String) info.get(&quot;password&quot;))).getBytes(), userRepository.findByUsername(username).getPassword().getBytes()))</b>
+&nbsp;        {
+<b class="nc">&nbsp;            return &quot;Password incorrect&quot;;</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        if (followerUsername != null &amp;&amp; userRepository.findByUsername(followerUsername) != null) {</b>
+<b class="nc">&nbsp;            user.removeFollower(followerUsername);</b>
+<b class="nc">&nbsp;            userRepository.deleteByUsername(username);</b>
+<b class="nc">&nbsp;            userRepository.save(user);</b>
+<b class="nc">&nbsp;            follower.unfollow(username);</b>
+<b class="nc">&nbsp;            userRepository.deleteByUsername(followerUsername);</b>
+<b class="nc">&nbsp;            userRepository.save(follower);</b>
+&nbsp;
+<b class="nc">&nbsp;            return &quot;Follower successfully removed&quot;;</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            return &quot;Error: User is null&quot;;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    @GetMapping(path = &quot;/users/{username}/following&quot;)
+&nbsp;    ArrayList&lt;User&gt; getFollowingByUsername(@PathVariable String username) {
+<b class="nc">&nbsp;        User user = userRepository.findByUsername(username);</b>
+<b class="nc">&nbsp;        if (user != null) {</b>
+<b class="nc">&nbsp;            ArrayList&lt;User&gt; following = new ArrayList&lt;&gt;();</b>
+<b class="nc">&nbsp;            for(int i = 0; i &lt; user.getFollowing().size(); i++)</b>
+&nbsp;            {
+<b class="nc">&nbsp;                following.add(userRepository.findByUsername(user.getFollowing().get(i)));</b>
+&nbsp;            }
+<b class="nc">&nbsp;            return following;</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            return null;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    @PostMapping(path = &quot;/users/{username}/following&quot;)
+&nbsp;    String followByUsername(@PathVariable String username, @RequestBody Map&lt;String, String&gt; info) throws NoSuchAlgorithmException {
+<b class="nc">&nbsp;        User user = userRepository.findByUsername(username);</b>
+<b class="nc">&nbsp;        String followingUsername = info.get(&quot;followingUsername&quot;);</b>
+<b class="nc">&nbsp;        User followingUser = userRepository.findByUsername(followingUsername);</b>
+<b class="nc">&nbsp;        if (user == null)</b>
+&nbsp;        {
+<b class="nc">&nbsp;            return &quot;User does not exist&quot;;</b>
+&nbsp;        }
+&nbsp;        /*
+&nbsp;        if (!MessageDigest.isEqual(( hashCreator.createSHAHash( (String) info.get(&quot;password&quot;))).getBytes(), userRepository.findByUsername(username).getPassword().getBytes()))
+&nbsp;        {
+&nbsp;            return &quot;Password incorrect&quot;;
+&nbsp;        }
+&nbsp;
+&nbsp;         */
+&nbsp;
+<b class="nc">&nbsp;        if (followingUser != null) {</b>
+<b class="nc">&nbsp;            user.follow(followingUsername);</b>
+<b class="nc">&nbsp;            followingUser.addFollower(username);</b>
+&nbsp;
+<b class="nc">&nbsp;            userRepository.deleteByUsername(username);</b>
+<b class="nc">&nbsp;            userRepository.save(user);</b>
+&nbsp;
+<b class="nc">&nbsp;            userRepository.deleteByUsername(followingUsername);</b>
+<b class="nc">&nbsp;            userRepository.save(followingUser);</b>
+&nbsp;
+&nbsp;            // update timeline maybe
+&nbsp;
+<b class="nc">&nbsp;            return &quot;Followed successfully&quot;;</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            return &quot;Error: User is null&quot;;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    @DeleteMapping(path = &quot;/users/{username}/following&quot;)
+&nbsp;    String unfollowByUsername(@PathVariable String username, @RequestBody Map&lt;String, String&gt; info) throws NoSuchAlgorithmException {
+<b class="nc">&nbsp;        User user = userRepository.findByUsername(username);</b>
+<b class="nc">&nbsp;        String followingUsername = info.get(&quot;followingUsername&quot;);</b>
+<b class="nc">&nbsp;        User followingUser = userRepository.findByUsername(followingUsername);</b>
+<b class="nc">&nbsp;        if (user == null)</b>
+&nbsp;        {
+<b class="nc">&nbsp;            return &quot;User does not exist&quot;;</b>
+&nbsp;        }
+<b class="nc">&nbsp;        if (!MessageDigest.isEqual(( hashCreator.createSHAHash( (String) info.get(&quot;password&quot;))).getBytes(), userRepository.findByUsername(username).getPassword().getBytes()))</b>
+&nbsp;        {
+<b class="nc">&nbsp;            return &quot;Password incorrect&quot;;</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        if (followingUser != null) {</b>
+<b class="nc">&nbsp;            user.unfollow(followingUsername);</b>
+<b class="nc">&nbsp;            followingUser.removeFollower(username);</b>
+&nbsp;
+<b class="nc">&nbsp;            userRepository.deleteByUsername(username);</b>
+<b class="nc">&nbsp;            userRepository.save(user);</b>
+&nbsp;
+<b class="nc">&nbsp;            userRepository.deleteByUsername(followingUsername);</b>
+<b class="nc">&nbsp;            userRepository.save(followingUser);</b>
+&nbsp;
+&nbsp;            // update timeline maybe
+&nbsp;
+<b class="nc">&nbsp;            return &quot;Following successfully ended&quot;;</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            return &quot;Error: User is null&quot;;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;/*
+&nbsp;    // update this maybe?
+&nbsp;    @PostMapping(path = &quot;/users/{username}/validate&quot;)
+&nbsp;    String validateUser(@PathVariable String username, @RequestBody Map&lt;String, String&gt; password) throws NoSuchAlgorithmException {
+&nbsp;        User user = userRepository.findByUsername(username);
+&nbsp;        if (password == null || user == null)
+&nbsp;            return failure;
+&nbsp;
+&nbsp;        //check passwords
+&nbsp;        if (MessageDigest.isEqual(password.get(&quot;password&quot;).getBytes(), user.getPassword().getBytes()))
+&nbsp;        {
+&nbsp;            return &quot;Password correct&quot;;
+&nbsp;        } else
+&nbsp;        {
+&nbsp;            return &quot;Password Incorrect&quot;;
+&nbsp;        }
+&nbsp;
+&nbsp;
+&nbsp;    } */
+&nbsp;
+&nbsp;    @PostMapping(path = &quot;/user/change-password&quot;)
+&nbsp;    String updatePassword(@RequestBody Map&lt;String, String&gt; info) throws NoSuchAlgorithmException {
+&nbsp;
+<b class="fc">&nbsp;        String username = info.get(&quot;username&quot;);</b>
+<b class="fc">&nbsp;        String password = info.get(&quot;password&quot;);</b>
+<b class="fc">&nbsp;        String newPassword = info.get(&quot;newPassword&quot;);</b>
+<b class="fc">&nbsp;        User user = userRepository.findByUsername(username);</b>
+&nbsp;
+<b class="pc">&nbsp;        if (user == null)</b>
+<b class="nc">&nbsp;            return &quot;No user found&quot;;</b>
+<b class="pc">&nbsp;        if (password == null || newPassword == null)</b>
+<b class="nc">&nbsp;            return &quot;Password is null&quot;;</b>
+&nbsp;
+&nbsp;        // check password first
+<b class="pc">&nbsp;        if (!MessageDigest.isEqual(( hashCreator.createSHAHash( (String) info.get(&quot;password&quot;))).getBytes(), userRepository.findByUsername(username).getPassword().getBytes()))</b>
+&nbsp;        {
+&nbsp;            // then set it
+<b class="fc">&nbsp;            user.setPassword(hashCreator.createSHAHash(newPassword));</b>
+<b class="fc">&nbsp;            userRepository.deleteByUsername(username);</b>
+<b class="fc">&nbsp;            userRepository.save(user);</b>
+<b class="fc">&nbsp;            return &quot;Password successfully updated&quot;;</b>
+&nbsp;
+&nbsp;        } else {
+<b class="nc">&nbsp;            return &quot;Password update failed&quot;;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    @PostMapping(path = &quot;/forgot-password&quot;)
+&nbsp;    String forgotPassword(@RequestBody Map&lt;String, String&gt; info) {
+<b class="nc">&nbsp;        String username = info.get(&quot;username&quot;);</b>
+<b class="nc">&nbsp;        String email = info.get(&quot;email&quot;);</b>
+<b class="nc">&nbsp;        User user = userRepository.findByUsername(username);</b>
+&nbsp;
+<b class="nc">&nbsp;        if (user == null)</b>
+<b class="nc">&nbsp;            return &quot;User not found&quot;;</b>
+<b class="nc">&nbsp;        if (email == null)</b>
+<b class="nc">&nbsp;            return &quot;Email is null&quot;;</b>
+&nbsp;
+&nbsp;        // how to validate? usually it sends an email
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;        return &quot;&quot;;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2025-04-20 00:04</div>
+</div>
+</body>
+</html>
